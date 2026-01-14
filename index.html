@@ -11,71 +11,66 @@
 
 <div class="app">
 
-  <!-- HEADER -->
   <header class="header">
     <h1>Ledgerly</h1>
-    <span>January 2026</span>
+    <span id="todayLabel"></span>
   </header>
 
-  <!-- BALANCE CARD -->
-  <div class="card balance-card">
-    <div class="balance-label">Total Spent</div>
-    <div class="balance-amount">₹ <span id="total">0</span></div>
-    <div class="balance-footer">
-      <span>Budget ₹5000</span>
-      <span id="status">On track</span>
+  <!-- SUMMARY CARD -->
+  <div class="card summary-card">
+    <div>
+      <p>Total Spent</p>
+      <h2>₹ <span id="totalSpent">0</span></h2>
+    </div>
+    <div>
+      <p>Total Saved</p>
+      <h2>₹ <span id="totalSaved">0</span></h2>
     </div>
   </div>
 
-  <!-- STATS -->
-  <div class="stats">
-    <div class="stat-card">
-      <span>Food</span>
-      <strong id="foodTotal">₹0</strong>
-    </div>
-    <div class="stat-card">
-      <span>Travel</span>
-      <strong id="travelTotal">₹0</strong>
-    </div>
-    <div class="stat-card">
-      <span>Shopping</span>
-      <strong id="shoppingTotal">₹0</strong>
-    </div>
-    <div class="stat-card">
-      <span>Bills</span>
-      <strong id="billsTotal">₹0</strong>
-    </div>
-  </div>
-
-  <!-- ANALYTICS -->
-  <div class="card chart-card">
-    <canvas id="chart"></canvas>
-  </div>
-
-  <!-- TRANSACTIONS -->
+  <!-- CHARTS -->
   <div class="card">
-    <h3>Recent Expenses</h3>
+    <h3>Today: Spend vs Save</h3>
+    <canvas id="barChart"></canvas>
+  </div>
+
+  <div class="card">
+    <h3>Spending by Category</h3>
+    <canvas id="pieChart"></canvas>
+  </div>
+
+  <!-- RECENT -->
+  <div class="card">
+    <h3>Recent Entries</h3>
     <ul id="list"></ul>
   </div>
 
 </div>
 
 <!-- ADD BUTTON -->
-<button class="fab" id="open">＋</button>
+<button class="fab" id="openSheet">＋</button>
 
 <!-- ADD SHEET -->
 <div class="sheet hidden" id="sheet">
   <div class="sheet-content">
-    <h3>Add Expense</h3>
+    <h3>Add Entry</h3>
+
+    <select id="entryType">
+      <option value="spend">Spend</option>
+      <option value="save">Save</option>
+    </select>
+
     <input id="amount" type="number" placeholder="Amount ₹">
+
     <select id="category">
       <option>Food</option>
       <option>Travel</option>
       <option>Shopping</option>
       <option>Bills</option>
+      <option>Savings</option>
     </select>
-    <input id="note" placeholder="Note (optional)">
-    <button id="save">Save</button>
+
+    <button id="saveEntry">Save</button>
   </div>
 </div>
 
