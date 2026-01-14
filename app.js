@@ -1,63 +1,95 @@
-let data = JSON.parse(localStorage.getItem("ledgerly")) || [];
+let entries = JSON.parse(localStorage.getItem("ledgerly")) || [];
+let currentDate = new Date();
 let barChart, pieChart;
 
-const today = new Date().toISOString().slice(0, 10);
+/* MONTH LABEL */
+function updateMonthLabel() {
+  monthLabel.textContent = currentDate.toLocaleString("default", {
+    month: "long",
+    year: "numeric"
+  });
+}
 
-toggleAdd.onclick = () => {
-  addForm.style.display =
-    addForm.style.display === "none" ? "block" : "none";
+/* MONTH NAV */
+prevMonth.onclick = () => {
+  currentDate.setMonth(currentDate.getMonth() - 1);
+  updateMonthLabel();
+  render();
 };
 
+nextMonth.onclick = () => {
+  currentDate.setMonth(currentDate.getMonth() + 1);
+  updateMonthLabel();
+  render();
+};
+
+/* ADD ENTRY */
 addEntry.onclick = () => {
   const amt = Number(amount.value);
   if (!amt || amt <= 0 || amt > 100000) return;
 
-  data.push({
-    type: type.value,
+  entries.push({
+    id: Date.now(),
+    type: type.value,          // spend | save | pay
     amount: amt,
+    note: note.value,
     category: category.value,
-    date: today
+    date: new Date(currentDate)
   });
 
-  localStorage.setItem("ledgerly", JSON.stringify(data));
-  amount.value = "";
+  localStorage.setItem("ledgerly", JSON.stringify(entries));
+  amount.value = note.value = "";
   render();
 };
 
+/* DELETE */
+function deleteEntry(id) {
+  entries = entries.filter(e => e.id !== id);
+  localStorage.setItem("ledgerly", JSON.stringify(entries));
+  render();
+}
+
+/* RENDER */
 function render() {
-  let todaySpend = 0, todaySave = 0;
+  let spent = 0, saved = 0, payable = 0;
   let categoryMap = {};
   list.innerHTML = "";
 
-  data.slice().reverse().forEach(e => {
-    if (e.date === today) {
-      if (e.type === "spend") todaySpend += e.amount;
-      if (e.type === "save") todaySave += e.amount;
-    }
+  entries.forEach(e => {
+    const d = new Date(e.date);
+    if (
+      d.getMonth() === currentDate.getMonth() &&
+      d.getFullYear() === currentDate.getFullYear()
+    ) {
+      if (e.type === "spend") {
+        spent += e.amount;
+        categoryMap[e.category] =
+          (categoryMap[e.category] || 0) + e.amount;
+      }
+      if (e.type === "save") saved += e.amount;
+      if (e.type === "pay") payable += e.amount;
 
-    if (e.type === "spend") {
-      categoryMap[e.category] =
-        (categoryMap[e.category] || 0) + e.amount;
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <span>${e.type === "pay" ? "To Pay" : e.category} — ₹${e.amount}</span>
+        <span class="delete" onclick="deleteEntry(${e.id})">✕</span>
+      `;
+      list.appendChild(li);
     }
-
-    list.innerHTML += `
-      <li>
-        <span>${e.type === "save" ? "Saved" : e.category}</span>
-        <strong>₹${e.amount}</strong>
-      </li>
-    `;
   });
 
-  todaySpent.textContent = todaySpend;
-  todaySaved.textContent = todaySave;
+  spentEl.textContent = spent;
+  savedEl.textContent = saved;
+  payableEl.textContent = payable;
 
-  drawBar(todaySpend, todaySave);
+  drawBar(spent, saved);
   drawPie(categoryMap);
 }
 
+/* CHARTS */
 function drawBar(spend, save) {
   if (barChart) barChart.destroy();
-  barChart = new Chart(barChart = document.getElementById("barChart"), {
+  barChart = new Chart(barChartCtx = document.getElementById("barChart"), {
     type: "bar",
     data: {
       labels: ["Spend", "Save"],
@@ -84,4 +116,6 @@ function drawPie(map) {
   });
 }
 
+/* INIT */
+updateMonthLabel();
 render();
