@@ -12,7 +12,6 @@ body {
   padding: 16px;
 }
 
-/* HEADER */
 .header {
   display: flex;
   justify-content: space-between;
@@ -21,13 +20,12 @@ body {
 
 .header button {
   font-size: 20px;
-  border: none;
   background: none;
+  border: none;
 }
 
-/* CARD */
 .card {
-  background: white;
+  background: #fff;
   border-radius: 16px;
   padding: 16px;
   margin-top: 16px;
@@ -51,32 +49,29 @@ select, input {
   margin-bottom: 10px;
 }
 
-button#addEntry {
+button#addBtn {
   width: 100%;
   padding: 12px;
   background: #6366f1;
-  color: white;
+  color: #fff;
   border: none;
   border-radius: 10px;
 }
 
-/* LIST */
-#list {
+#entryList {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-#list li {
+#entryList li {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
+  padding: 8px 0;
   border-bottom: 1px solid #e5e7eb;
 }
 
 .delete {
   color: #ef4444;
   cursor: pointer;
-  font-size: 14px;
 }
