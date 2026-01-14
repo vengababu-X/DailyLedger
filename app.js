@@ -1,44 +1,55 @@
 let entries = JSON.parse(localStorage.getItem("ledgerly")) || [];
-let currentDate = new Date();
-let barChart, pieChart;
+let currentMonth = new Date().toISOString().slice(0,7); // YYYY-MM
+let barChart = null;
+let pieChart = null;
+
+/* ELEMENTS */
+const monthLabel = document.getElementById("monthLabel");
+const spentEl = document.getElementById("spent");
+const savedEl = document.getElementById("saved");
+const payEl = document.getElementById("pay");
+const listEl = document.getElementById("entryList");
 
 /* MONTH LABEL */
 function updateMonthLabel() {
-  monthLabel.textContent = currentDate.toLocaleString("default", {
-    month: "long",
-    year: "numeric"
-  });
+  const d = new Date(currentMonth + "-01");
+  monthLabel.textContent = d.toLocaleString("default", { month: "long", year: "numeric" });
 }
 
 /* MONTH NAV */
-prevMonth.onclick = () => {
-  currentDate.setMonth(currentDate.getMonth() - 1);
+document.getElementById("prevMonth").onclick = () => {
+  const d = new Date(currentMonth + "-01");
+  d.setMonth(d.getMonth() - 1);
+  currentMonth = d.toISOString().slice(0,7);
   updateMonthLabel();
   render();
 };
 
-nextMonth.onclick = () => {
-  currentDate.setMonth(currentDate.getMonth() + 1);
+document.getElementById("nextMonth").onclick = () => {
+  const d = new Date(currentMonth + "-01");
+  d.setMonth(d.getMonth() + 1);
+  currentMonth = d.toISOString().slice(0,7);
   updateMonthLabel();
   render();
 };
 
 /* ADD ENTRY */
-addEntry.onclick = () => {
+document.getElementById("addBtn").onclick = () => {
   const amt = Number(amount.value);
   if (!amt || amt <= 0 || amt > 100000) return;
 
   entries.push({
     id: Date.now(),
-    type: type.value,          // spend | save | pay
+    type: entryType.value,
     amount: amt,
-    note: note.value,
     category: category.value,
-    date: new Date(currentDate)
+    note: note.value,
+    month: currentMonth
   });
 
   localStorage.setItem("ledgerly", JSON.stringify(entries));
-  amount.value = note.value = "";
+  amount.value = "";
+  note.value = "";
   render();
 };
 
@@ -51,65 +62,59 @@ function deleteEntry(id) {
 
 /* RENDER */
 function render() {
-  let spent = 0, saved = 0, payable = 0;
+  let spent = 0, saved = 0, pay = 0;
   let categoryMap = {};
-  list.innerHTML = "";
+  listEl.innerHTML = "";
 
-  entries.forEach(e => {
-    const d = new Date(e.date);
-    if (
-      d.getMonth() === currentDate.getMonth() &&
-      d.getFullYear() === currentDate.getFullYear()
-    ) {
-      if (e.type === "spend") {
-        spent += e.amount;
-        categoryMap[e.category] =
-          (categoryMap[e.category] || 0) + e.amount;
-      }
-      if (e.type === "save") saved += e.amount;
-      if (e.type === "pay") payable += e.amount;
+  const monthEntries = entries.filter(e => e.month === currentMonth);
 
-      const li = document.createElement("li");
-      li.innerHTML = `
-        <span>${e.type === "pay" ? "To Pay" : e.category} — ₹${e.amount}</span>
-        <span class="delete" onclick="deleteEntry(${e.id})">✕</span>
-      `;
-      list.appendChild(li);
+  monthEntries.forEach(e => {
+    if (e.type === "spend") {
+      spent += e.amount;
+      categoryMap[e.category] = (categoryMap[e.category] || 0) + e.amount;
     }
+    if (e.type === "save") saved += e.amount;
+    if (e.type === "pay") pay += e.amount;
+
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <span>${e.type === "pay" ? "To Pay" : e.category} ₹${e.amount}</span>
+      <span class="delete">✕</span>
+    `;
+    li.querySelector(".delete").onclick = () => deleteEntry(e.id);
+    listEl.appendChild(li);
   });
 
   spentEl.textContent = spent;
   savedEl.textContent = saved;
-  payableEl.textContent = payable;
+  payEl.textContent = pay;
 
-  drawBar(spent, saved);
-  drawPie(categoryMap);
+  drawCharts(spent, saved, categoryMap);
 }
 
 /* CHARTS */
-function drawBar(spend, save) {
+function drawCharts(spent, saved, categoryMap) {
   if (barChart) barChart.destroy();
-  barChart = new Chart(barChartCtx = document.getElementById("barChart"), {
+  if (pieChart) pieChart.destroy();
+
+  barChart = new Chart(document.getElementById("barChart"), {
     type: "bar",
     data: {
       labels: ["Spend", "Save"],
       datasets: [{
-        data: [spend, save],
+        data: [spent, saved],
         backgroundColor: ["#ef4444", "#22c55e"]
       }]
     },
     options: { plugins: { legend: { display: false } } }
   });
-}
 
-function drawPie(map) {
-  if (pieChart) pieChart.destroy();
   pieChart = new Chart(document.getElementById("pieChart"), {
     type: "pie",
     data: {
-      labels: Object.keys(map),
+      labels: Object.keys(categoryMap),
       datasets: [{
-        data: Object.values(map),
+        data: Object.values(categoryMap),
         backgroundColor: ["#22c55e","#3b82f6","#f59e0b","#ef4444"]
       }]
     }
