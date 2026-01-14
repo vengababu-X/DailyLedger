@@ -13,45 +13,51 @@
 
   <!-- HEADER -->
   <header class="header">
-    <h1>Ledgerly</h1>
-    <button id="toggleAdd" class="add-btn">＋</button>
+    <button id="prevMonth">‹</button>
+    <h1 id="monthLabel">Ledgerly</h1>
+    <button id="nextMonth">›</button>
   </header>
 
   <!-- SUMMARY -->
   <div class="card summary">
     <div>
-      <p>Today Spent</p>
-      <h2>₹ <span id="todaySpent">0</span></h2>
+      <p>Spent</p>
+      <h2>₹ <span id="spent">0</span></h2>
     </div>
     <div>
-      <p>Today Saved</p>
-      <h2>₹ <span id="todaySaved">0</span></h2>
+      <p>Saved</p>
+      <h2>₹ <span id="saved">0</span></h2>
+    </div>
+    <div>
+      <p>To Pay</p>
+      <h2>₹ <span id="payable">0</span></h2>
     </div>
   </div>
 
-  <!-- ADD FORM -->
-  <div class="card" id="addForm">
+  <!-- ADD ENTRY -->
+  <div class="card">
     <select id="type">
       <option value="spend">Spend</option>
       <option value="save">Save</option>
+      <option value="pay">To Pay</option>
     </select>
 
     <input id="amount" type="number" placeholder="Amount ₹" />
+    <input id="note" placeholder="Note (who / why)" />
 
     <select id="category">
       <option>Food</option>
       <option>Travel</option>
       <option>Shopping</option>
       <option>Bills</option>
-      <option>Savings</option>
     </select>
 
-    <button id="addEntry">Add Entry</button>
+    <button id="addEntry">Add</button>
   </div>
 
   <!-- BAR CHART -->
   <div class="card">
-    <h3>Today: Spend vs Save</h3>
+    <h3>Spend vs Save</h3>
     <canvas id="barChart"></canvas>
   </div>
 
@@ -61,9 +67,9 @@
     <canvas id="pieChart"></canvas>
   </div>
 
-  <!-- RECENT -->
+  <!-- ENTRIES -->
   <div class="card">
-    <h3>Recent Entries</h3>
+    <h3>Entries</h3>
     <ul id="list"></ul>
   </div>
 
