@@ -1,141 +1,110 @@
-let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
-let budget = Number(localStorage.getItem("budget")) || 0;
-let currentDate = new Date();
-let selectedCategory = "Food";
+let data = JSON.parse(localStorage.getItem("ledgerly")) || [];
+let view = "month";
+let categoryFilter = null;
+let search = "";
 let chart;
 
-/* DOM */
-const list = document.getElementById("expenseList");
-const monthTotalEl = document.getElementById("monthTotal");
-const monthLabel = document.getElementById("currentMonth");
-const budgetLabel = document.getElementById("budgetLabel");
-const sheet = document.getElementById("sheet");
+const totalEl = document.getElementById("totalAmount");
+const labelEl = document.getElementById("summaryLabel");
+const budgetEl = document.getElementById("budgetStatus");
+const list = document.getElementById("list");
 
-/* INIT */
-updateMonthLabel();
-render();
+/* VIEW TOGGLE */
+document.querySelectorAll(".view-toggle button").forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll(".view-toggle button").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    view = b.dataset.view;
+    render();
+  };
+});
 
-/* OPEN / CLOSE */
-document.getElementById("openAdd").onclick = () => sheet.classList.remove("hidden");
-document.getElementById("closeSheet").onclick = () => sheet.classList.add("hidden");
+/* SEARCH */
+document.getElementById("search").oninput = e => {
+  search = e.target.value.toLowerCase();
+  render();
+};
+
+/* FAB */
+fab.onclick = () => sheet.classList.remove("hidden");
 
 /* CATEGORY */
-document.querySelectorAll(".categories button").forEach(btn => {
-  btn.onclick = () => selectedCategory = btn.dataset.cat;
+let currentCat = "Food";
+document.querySelectorAll(".cats button").forEach(b => {
+  b.onclick = () => currentCat = b.dataset.cat;
 });
 
 /* SAVE */
-document.getElementById("saveExpense").onclick = () => {
-  const amount = Number(amountInput.value);
-  const note = noteInput.value;
-  const newBudget = Number(budgetInput.value);
-
-  if (newBudget) {
-    budget = newBudget;
-    localStorage.setItem("budget", budget);
-  }
-
-  if (!amount) return;
-
-  expenses.push({
-    amount,
-    note,
-    category: selectedCategory,
-    date: new Date().toISOString()
+save.onclick = () => {
+  if (!amount.value) return;
+  data.push({
+    amount: +amount.value,
+    note: note.value,
+    cat: currentCat,
+    date: new Date()
   });
-
-  localStorage.setItem("expenses", JSON.stringify(expenses));
+  localStorage.setItem("ledgerly", JSON.stringify(data));
   sheet.classList.add("hidden");
-  amountInput.value = noteInput.value = budgetInput.value = "";
+  amount.value = note.value = "";
   render();
 };
 
 /* RENDER */
 function render() {
   list.innerHTML = "";
-  let total = 0;
-  let monthData = [];
-
-  expenses.forEach((e, i) => {
+  let filtered = data.filter(e => {
     const d = new Date(e.date);
-    if (
-      d.getMonth() === currentDate.getMonth() &&
-      d.getFullYear() === currentDate.getFullYear()
-    ) {
-      total += e.amount;
-      monthData.push(e);
-
-      const li = document.createElement("li");
-      li.innerHTML = `
-        <span>${e.category} ${e.note || ""}</span>
-        <strong>₹${e.amount}</strong>
-      `;
-      li.onclick = () => deleteExpense(i);
-      list.appendChild(li);
-    }
+    const now = new Date();
+    if (view === "day") return d.toDateString() === now.toDateString();
+    if (view === "month") return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    return d.getFullYear() === now.getFullYear();
   });
 
-  monthTotalEl.innerText = total;
-  renderChart(monthData);
+  if (categoryFilter) filtered = filtered.filter(e => e.cat === categoryFilter);
+  if (search) filtered = filtered.filter(e => (e.note || "").toLowerCase().includes(search));
 
-  if (budget) {
-    budgetLabel.innerText = `Budget: ₹${budget}`;
-    if (total > budget) budgetLabel.style.color = "#ef4444";
-    else if (total > budget * 0.8) budgetLabel.style.color = "#f59e0b";
-    else budgetLabel.style.color = "#22c55e";
-  }
-}
+  let total = filtered.reduce((s,e) => s+e.amount, 0);
+  totalEl.textContent = total;
+  labelEl.textContent = `${view.charAt(0).toUpperCase()+view.slice(1)} spend`;
 
-/* DELETE */
-function deleteExpense(i) {
-  if (!confirm("Delete this expense?")) return;
-  expenses.splice(i, 1);
-  localStorage.setItem("expenses", JSON.stringify(expenses));
-  render();
+  filtered.forEach(e => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <div>
+        <div>${e.cat}</div>
+        <div class="item-note">${e.note || "—"}</div>
+      </div>
+      <strong>₹${e.amount}</strong>
+    `;
+    list.appendChild(li);
+  });
+
+  renderChart(filtered);
+  insightText.textContent = filtered.length
+    ? `Most recent focus: ${filtered[filtered.length-1].cat}`
+    : "No data for this period.";
 }
 
 /* CHART */
-function renderChart(data) {
-  const ctx = document.getElementById("categoryChart");
-  const map = {};
-
-  data.forEach(e => map[e.category] = (map[e.category] || 0) + e.amount);
+function renderChart(arr) {
+  let map = {};
+  arr.forEach(e => map[e.cat] = (map[e.cat]||0)+e.amount);
 
   if (chart) chart.destroy();
-
-  chart = new Chart(ctx, {
+  chart = new Chart(chart.getContext("2d"), {
     type: "doughnut",
     data: {
       labels: Object.keys(map),
-      datasets: [{
-        data: Object.values(map),
-        backgroundColor: ["#22c55e","#3b82f6","#f59e0b","#ef4444"]
-      }]
+      datasets: [{ data: Object.values(map) }]
     },
     options: {
-      plugins: {
-        legend: { labels: { color: "#e5e7eb" } }
+      onClick: (_, el) => {
+        if (!el.length) return;
+        categoryFilter = Object.keys(map)[el[0].index];
+        render();
       }
     }
   });
 }
 
-/* MONTH NAV */
-document.getElementById("prevMonth").onclick = () => {
-  currentDate.setMonth(currentDate.getMonth() - 1);
-  updateMonthLabel();
-  render();
-};
-
-document.getElementById("nextMonth").onclick = () => {
-  currentDate.setMonth(currentDate.getMonth() + 1);
-  updateMonthLabel();
-  render();
-};
-
-function updateMonthLabel() {
-  monthLabel.innerText = currentDate.toLocaleString("default", {
-    month: "long",
-    year: "numeric"
-  });
-}
+render();
