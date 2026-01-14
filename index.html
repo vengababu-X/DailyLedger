@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ledgerly</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- SUMMARY -->
+  <section class="summary">
+    <div class="amount">₹ <span id="monthTotal">0</span></div>
+    <div class="label" id="budgetLabel">Spent this month</div>
+  </section>
+
+  <!-- MONTH NAV -->
+  <section class="month-nav">
+    <button id="prevMonth">‹</button>
+    <span id="currentMonth"></span>
+    <button id="nextMonth">›</button>
+  </section>
+
+  <!-- CHART -->
+  <section class="insights">
+    <canvas id="categoryChart"></canvas>
+  </section>
+
+  <!-- EXPENSE LIST -->
+  <section class="list">
+    <ul id="expenseList"></ul>
+  </section>
+
+  <!-- FAB -->
+  <button class="fab" id="openAdd">＋</button>
+
+  <!-- ADD / EDIT SHEET -->
+  <div class="sheet hidden" id="sheet">
+    <div class="sheet-content">
+      <input id="amountInput" type="number" placeholder="₹ Amount">
+
+      <div class="categories">
+        <button data-cat="Food">🍔</button>
+        <button data-cat="Travel">🚕</button>
+        <button data-cat="Shopping">🛍</button>
+        <button data-cat="Bills">💡</button>
+      </div>
+
+      <input id="noteInput" placeholder="Note (optional)">
+      <input id="budgetInput" type="number" placeholder="Monthly Budget (₹)">
+
+      <button id="saveExpense">Save</button>
+      <button id="closeSheet" class="secondary">Cancel</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
