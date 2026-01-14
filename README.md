@@ -14,7 +14,7 @@
 ## 🔗 Live App
 
 👉 **Try Ledgerly here:**  
-**https://your-username.github.io/ledgerly/**
+**https://vengababu-x.github.io/DailyLedger/**
 
 > Optimized for mobile.  
 > Best used as a daily personal finance notebook.
