@@ -1,48 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Ledgerly</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <title>Ledgerly – Professional Spend Notebook</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="summary">
-  <div class="amount-row">
-    <span class="currency">₹</span>
-    <span id="totalAmount">0</span>
-  </div>
-  <div class="meta">
-    <span id="monthLabel">January 2026</span>
-    <span id="budgetLabel">Budget ₹5000</span>
-  </div>
+<header class="header">
+  <div class="title">Ledgerly</div>
+  <div class="subtitle">Professional Daily Spend Notebook</div>
 </header>
 
-<section class="chart-wrap">
-  <canvas id="chart"></canvas>
+<section class="summary">
+  <div class="summary-item">
+    <label>Total Spend</label>
+    <strong>₹ <span id="total">0</span></strong>
+  </div>
+  <div class="summary-item">
+    <label>Monthly Budget</label>
+    <strong>₹ <span id="budget">5000</span></strong>
+  </div>
+  <div class="summary-item">
+    <label>Variance</label>
+    <strong id="variance">₹ 0</strong>
+  </div>
 </section>
 
-<section id="categories"></section>
-
-<ul id="list"></ul>
-
-<button id="fab">＋</button>
-
-<div id="sheet" class="hidden">
-  <div class="sheet">
-    <input id="amount" type="number" placeholder="₹ Amount" />
-    <div class="cats">
-      <button data-cat="Food">🍔</button>
-      <button data-cat="Travel">🚕</button>
-      <button data-cat="Shopping">🛍</button>
-      <button data-cat="Bills">💡</button>
-    </div>
-    <input id="note" placeholder="Note (optional)" />
-    <button id="save">Add expense</button>
+<section class="section">
+  <div class="section-title">Category Summary</div>
+  <div class="table header-row">
+    <span>Category</span>
+    <span>Amount</span>
+    <span>%</span>
   </div>
-</div>
+  <div id="categoryTable"></div>
+</section>
+
+<section class="section">
+  <div class="section-title">Daily Ledger</div>
+  <div class="table header-row">
+    <span>Date</span>
+    <span>Category</span>
+    <span>Amount</span>
+  </div>
+  <div id="entryTable"></div>
+</section>
+
+<section class="add-section">
+  <input id="amount" type="number" placeholder="Amount (₹)">
+  <select id="category">
+    <option>Food</option>
+    <option>Travel</option>
+    <option>Shopping</option>
+    <option>Bills</option>
+  </select>
+  <button id="addBtn">Add Entry</button>
+</section>
 
 <script src="app.js"></script>
 </body>
