@@ -1,46 +1,43 @@
-let entries = JSON.parse(localStorage.getItem("ledgerly")) || [];
+let data = JSON.parse(localStorage.getItem("ledgerly")) || [];
 let barChart, pieChart;
 
-const today = new Date().toISOString().slice(0,10);
-todayLabel.textContent = today;
+const today = new Date().toISOString().slice(0, 10);
 
-openSheet.onclick = () => sheet.classList.remove("hidden");
+toggleAdd.onclick = () => {
+  addForm.style.display =
+    addForm.style.display === "none" ? "block" : "none";
+};
 
-saveEntry.onclick = () => {
-  const amountVal = Number(amount.value);
-  if (!amountVal || amountVal <= 0 || amountVal > 100000) return;
+addEntry.onclick = () => {
+  const amt = Number(amount.value);
+  if (!amt || amt <= 0 || amt > 100000) return;
 
-  entries.push({
-    type: entryType.value,
-    amount: amountVal,
+  data.push({
+    type: type.value,
+    amount: amt,
     category: category.value,
     date: today
   });
 
-  localStorage.setItem("ledgerly", JSON.stringify(entries));
+  localStorage.setItem("ledgerly", JSON.stringify(data));
   amount.value = "";
-  sheet.classList.add("hidden");
   render();
 };
 
 function render() {
-  let spent = 0, saved = 0;
-  let todaySpent = 0, todaySaved = 0;
+  let todaySpend = 0, todaySave = 0;
   let categoryMap = {};
-
   list.innerHTML = "";
 
-  entries.slice().reverse().forEach(e => {
-    if (e.type === "spend") spent += e.amount;
-    if (e.type === "save") saved += e.amount;
-
+  data.slice().reverse().forEach(e => {
     if (e.date === today) {
-      if (e.type === "spend") todaySpent += e.amount;
-      if (e.type === "save") todaySaved += e.amount;
+      if (e.type === "spend") todaySpend += e.amount;
+      if (e.type === "save") todaySave += e.amount;
     }
 
     if (e.type === "spend") {
-      categoryMap[e.category] = (categoryMap[e.category] || 0) + e.amount;
+      categoryMap[e.category] =
+        (categoryMap[e.category] || 0) + e.amount;
     }
 
     list.innerHTML += `
@@ -51,16 +48,16 @@ function render() {
     `;
   });
 
-  totalSpent.textContent = spent;
-  totalSaved.textContent = saved;
+  todaySpent.textContent = todaySpend;
+  todaySaved.textContent = todaySave;
 
-  drawBar(todaySpent, todaySaved);
+  drawBar(todaySpend, todaySave);
   drawPie(categoryMap);
 }
 
 function drawBar(spend, save) {
   if (barChart) barChart.destroy();
-  barChart = new Chart(barChartCtx = document.getElementById("barChart"), {
+  barChart = new Chart(barChart = document.getElementById("barChart"), {
     type: "bar",
     data: {
       labels: ["Spend", "Save"],
@@ -69,7 +66,7 @@ function drawBar(spend, save) {
         backgroundColor: ["#ef4444", "#22c55e"]
       }]
     },
-    options: { plugins:{ legend:{ display:false } } }
+    options: { plugins: { legend: { display: false } } }
   });
 }
 
