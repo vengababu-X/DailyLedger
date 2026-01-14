@@ -1,6 +1,4 @@
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -21,14 +19,10 @@ body {
   align-items: center;
 }
 
-.add-btn {
-  font-size: 28px;
+.header button {
+  font-size: 20px;
   border: none;
-  background: #6366f1;
-  color: white;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
+  background: none;
 }
 
 /* CARD */
@@ -51,16 +45,10 @@ body {
   color: #6b7280;
 }
 
-.summary h2 {
-  margin: 4px 0 0;
-}
-
-/* FORM */
 select, input {
   width: 100%;
   padding: 12px;
-  margin-bottom: 12px;
-  font-size: 14px;
+  margin-bottom: 10px;
 }
 
 button#addEntry {
@@ -82,6 +70,13 @@ button#addEntry {
 #list li {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 10px 0;
   border-bottom: 1px solid #e5e7eb;
+}
+
+.delete {
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 14px;
 }
