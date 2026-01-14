@@ -1,62 +1,73 @@
-let data = JSON.parse(localStorage.getItem("ledgerly-data")) || [];
-const monthlyBudget = 5000;
+let data = JSON.parse(localStorage.getItem("ledgerly")) || [];
+let chart;
 
-const totalEl = document.getElementById("total");
-const varianceEl = document.getElementById("variance");
-const categoryTable = document.getElementById("categoryTable");
-const entryTable = document.getElementById("entryTable");
+const totals = {
+  Food:0, Travel:0, Shopping:0, Bills:0
+};
 
-function render() {
-  let total = data.reduce((sum, e) => sum + e.amount, 0);
-  totalEl.textContent = total;
-  varianceEl.textContent = `₹ ${monthlyBudget - total}`;
+open.onclick = () => sheet.classList.remove("hidden");
 
-  // Category summary
-  const categoryMap = {};
-  data.forEach(e => {
-    categoryMap[e.category] = (categoryMap[e.category] || 0) + e.amount;
-  });
-
-  categoryTable.innerHTML = "";
-  Object.keys(categoryMap).forEach(cat => {
-    const pct = total ? ((categoryMap[cat] / total) * 100).toFixed(1) : 0;
-    categoryTable.innerHTML += `
-      <div class="table">
-        <span>${cat}</span>
-        <span>₹ ${categoryMap[cat]}</span>
-        <span>${pct}%</span>
-      </div>
-    `;
-  });
-
-  // Entry table
-  entryTable.innerHTML = "";
-  data.slice().reverse().forEach(e => {
-    entryTable.innerHTML += `
-      <div class="table">
-        <span>${e.date}</span>
-        <span>${e.category}</span>
-        <span>₹ ${e.amount}</span>
-      </div>
-    `;
-  });
-}
-
-document.getElementById("addBtn").onclick = () => {
-  const amount = Number(document.getElementById("amount").value);
-  const category = document.getElementById("category").value;
-
-  if (!amount || amount <= 0 || amount > 100000) return;
+save.onclick = () => {
+  const amt = Number(amount.value);
+  if(!amt || amt <= 0 || amt > 100000) return;
 
   data.push({
-    amount,
-    category,
-    date: new Date().toLocaleDateString()
+    amount:amt,
+    category:category.value,
+    note:note.value
   });
 
-  localStorage.setItem("ledgerly-data", JSON.stringify(data));
-  document.getElementById("amount").value = "";
+  localStorage.setItem("ledgerly",JSON.stringify(data));
+  amount.value = note.value = "";
+  sheet.classList.add("hidden");
   render();
 };
+
+function render() {
+  list.innerHTML = "";
+  Object.keys(totals).forEach(k => totals[k]=0);
+
+  let total = 0;
+  data.slice().reverse().forEach(e=>{
+    total += e.amount;
+    totals[e.category] += e.amount;
+
+    list.innerHTML += `
+      <li>
+        <div>
+          <strong>${e.category}</strong>
+          <div class="note">${e.note||""}</div>
+        </div>
+        <span>₹${e.amount}</span>
+      </li>
+    `;
+  });
+
+  totalEl.textContent = total;
+  foodTotal.textContent = `₹${totals.Food}`;
+  travelTotal.textContent = `₹${totals.Travel}`;
+  shoppingTotal.textContent = `₹${totals.Shopping}`;
+  billsTotal.textContent = `₹${totals.Bills}`;
+
+  drawChart();
+}
+
+function drawChart() {
+  if(chart) chart.destroy();
+  chart = new Chart(chartEl = document.getElementById("chart"), {
+    type:"doughnut",
+    data:{
+      labels:Object.keys(totals),
+      datasets:[{
+        data:Object.values(totals),
+        backgroundColor:["#22c55e","#3b82f6","#f59e0b","#ef4444"]
+      }]
+    },
+    options:{
+      cutout:"70%",
+      plugins:{ legend:{ position:"bottom" } }
+    }
+  });
+}
 
 render();
