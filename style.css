@@ -1,0 +1,122 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+/* SUMMARY */
+.summary {
+  padding: 30px;
+  background: linear-gradient(135deg, #1e293b, #020617);
+}
+
+.amount {
+  font-size: 38px;
+  font-weight: 700;
+}
+
+.label {
+  opacity: 0.75;
+}
+
+/* MONTH NAV */
+.month-nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 20px;
+}
+
+/* CHART */
+.insights {
+  padding: 20px;
+}
+
+/* LIST */
+.list {
+  padding: 10px 20px 90px;
+}
+
+.list li {
+  background: #020617;
+  margin-bottom: 10px;
+  padding: 14px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.list li span {
+  opacity: 0.85;
+}
+
+/* FAB */
+.fab {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  font-size: 28px;
+  background: #22c55e;
+  color: #000;
+  border: none;
+}
+
+/* SHEET */
+.sheet {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+}
+
+.hidden { display: none; }
+
+.sheet-content {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: #020617;
+  padding: 20px;
+  border-radius: 20px 20px 0 0;
+}
+
+.sheet input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: #0f172a;
+  border: none;
+  color: #fff;
+}
+
+.categories {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.categories button {
+  flex: 1;
+  font-size: 20px;
+  padding: 10px;
+  background: #1e293b;
+  border: none;
+  color: #fff;
+}
+
+.sheet button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  border: none;
+}
+
+.sheet .secondary {
+  background: transparent;
+  color: #94a3b8;
+}
