@@ -9,54 +9,41 @@
 </head>
 <body>
 
-  <!-- HEADER / SUMMARY -->
-  <header class="summary">
-    <div class="summary-main">
-      <span class="currency">₹</span>
-      <span id="totalAmount">0</span>
-    </div>
-    <div class="summary-sub">
-      <span id="summaryLabel">Monthly spend</span>
-      <span id="budgetStatus"></span>
-    </div>
-
-    <div class="view-toggle">
-      <button data-view="day">Day</button>
-      <button data-view="month" class="active">Month</button>
-      <button data-view="year">Year</button>
-    </div>
-  </header>
-
-  <!-- INSIGHT -->
-  <section class="insight">
-    <canvas id="chart"></canvas>
-    <p id="insightText"></p>
-  </section>
-
-  <!-- SEARCH -->
-  <input id="search" placeholder="Search expenses…" />
-
-  <!-- LIST -->
-  <ul id="list"></ul>
-
-  <!-- ACTION -->
-  <button id="fab">＋</button>
-
-  <!-- SHEET -->
-  <div id="sheet" class="hidden">
-    <div class="sheet">
-      <input id="amount" type="number" placeholder="Amount ₹" />
-      <div class="cats">
-        <button data-cat="Food">Food</button>
-        <button data-cat="Travel">Travel</button>
-        <button data-cat="Shopping">Shopping</button>
-        <button data-cat="Bills">Bills</button>
-      </div>
-      <input id="note" placeholder="Note (optional)" />
-      <button id="save">Add expense</button>
-    </div>
+<header class="summary">
+  <div class="amount-row">
+    <span class="currency">₹</span>
+    <span id="totalAmount">0</span>
   </div>
+  <div class="meta">
+    <span id="monthLabel">January 2026</span>
+    <span id="budgetLabel">Budget ₹5000</span>
+  </div>
+</header>
 
-  <script src="app.js"></script>
+<section class="chart-wrap">
+  <canvas id="chart"></canvas>
+</section>
+
+<section id="categories"></section>
+
+<ul id="list"></ul>
+
+<button id="fab">＋</button>
+
+<div id="sheet" class="hidden">
+  <div class="sheet">
+    <input id="amount" type="number" placeholder="₹ Amount" />
+    <div class="cats">
+      <button data-cat="Food">🍔</button>
+      <button data-cat="Travel">🚕</button>
+      <button data-cat="Shopping">🛍</button>
+      <button data-cat="Bills">💡</button>
+    </div>
+    <input id="note" placeholder="Note (optional)" />
+    <button id="save">Add expense</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
