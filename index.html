@@ -1,39 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Ledgerly</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
 <div class="app">
 
+  <!-- HEADER -->
   <header class="header">
     <h1>Ledgerly</h1>
-    <span id="todayLabel"></span>
+    <button id="toggleAdd" class="add-btn">＋</button>
   </header>
 
-  <!-- SUMMARY CARD -->
-  <div class="card summary-card">
+  <!-- SUMMARY -->
+  <div class="card summary">
     <div>
-      <p>Total Spent</p>
-      <h2>₹ <span id="totalSpent">0</span></h2>
+      <p>Today Spent</p>
+      <h2>₹ <span id="todaySpent">0</span></h2>
     </div>
     <div>
-      <p>Total Saved</p>
-      <h2>₹ <span id="totalSaved">0</span></h2>
+      <p>Today Saved</p>
+      <h2>₹ <span id="todaySaved">0</span></h2>
     </div>
   </div>
 
-  <!-- CHARTS -->
+  <!-- ADD FORM -->
+  <div class="card" id="addForm">
+    <select id="type">
+      <option value="spend">Spend</option>
+      <option value="save">Save</option>
+    </select>
+
+    <input id="amount" type="number" placeholder="Amount ₹" />
+
+    <select id="category">
+      <option>Food</option>
+      <option>Travel</option>
+      <option>Shopping</option>
+      <option>Bills</option>
+      <option>Savings</option>
+    </select>
+
+    <button id="addEntry">Add Entry</button>
+  </div>
+
+  <!-- BAR CHART -->
   <div class="card">
     <h3>Today: Spend vs Save</h3>
     <canvas id="barChart"></canvas>
   </div>
 
+  <!-- PIE CHART -->
   <div class="card">
     <h3>Spending by Category</h3>
     <canvas id="pieChart"></canvas>
@@ -45,33 +67,6 @@
     <ul id="list"></ul>
   </div>
 
-</div>
-
-<!-- ADD BUTTON -->
-<button class="fab" id="openSheet">＋</button>
-
-<!-- ADD SHEET -->
-<div class="sheet hidden" id="sheet">
-  <div class="sheet-content">
-    <h3>Add Entry</h3>
-
-    <select id="entryType">
-      <option value="spend">Spend</option>
-      <option value="save">Save</option>
-    </select>
-
-    <input id="amount" type="number" placeholder="Amount ₹">
-
-    <select id="category">
-      <option>Food</option>
-      <option>Travel</option>
-      <option>Shopping</option>
-      <option>Bills</option>
-      <option>Savings</option>
-    </select>
-
-    <button id="saveEntry">Save</button>
-  </div>
 </div>
 
 <script src="app.js"></script>
