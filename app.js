@@ -1,71 +1,88 @@
-let data = JSON.parse(localStorage.getItem("ledgerly")) || [];
-let chart;
+let entries = JSON.parse(localStorage.getItem("ledgerly")) || [];
+let barChart, pieChart;
 
-const totals = {
-  Food:0, Travel:0, Shopping:0, Bills:0
-};
+const today = new Date().toISOString().slice(0,10);
+todayLabel.textContent = today;
 
-open.onclick = () => sheet.classList.remove("hidden");
+openSheet.onclick = () => sheet.classList.remove("hidden");
 
-save.onclick = () => {
-  const amt = Number(amount.value);
-  if(!amt || amt <= 0 || amt > 100000) return;
+saveEntry.onclick = () => {
+  const amountVal = Number(amount.value);
+  if (!amountVal || amountVal <= 0 || amountVal > 100000) return;
 
-  data.push({
-    amount:amt,
-    category:category.value,
-    note:note.value
+  entries.push({
+    type: entryType.value,
+    amount: amountVal,
+    category: category.value,
+    date: today
   });
 
-  localStorage.setItem("ledgerly",JSON.stringify(data));
-  amount.value = note.value = "";
+  localStorage.setItem("ledgerly", JSON.stringify(entries));
+  amount.value = "";
   sheet.classList.add("hidden");
   render();
 };
 
 function render() {
-  list.innerHTML = "";
-  Object.keys(totals).forEach(k => totals[k]=0);
+  let spent = 0, saved = 0;
+  let todaySpent = 0, todaySaved = 0;
+  let categoryMap = {};
 
-  let total = 0;
-  data.slice().reverse().forEach(e=>{
-    total += e.amount;
-    totals[e.category] += e.amount;
+  list.innerHTML = "";
+
+  entries.slice().reverse().forEach(e => {
+    if (e.type === "spend") spent += e.amount;
+    if (e.type === "save") saved += e.amount;
+
+    if (e.date === today) {
+      if (e.type === "spend") todaySpent += e.amount;
+      if (e.type === "save") todaySaved += e.amount;
+    }
+
+    if (e.type === "spend") {
+      categoryMap[e.category] = (categoryMap[e.category] || 0) + e.amount;
+    }
 
     list.innerHTML += `
       <li>
-        <div>
-          <strong>${e.category}</strong>
-          <div class="note">${e.note||""}</div>
-        </div>
-        <span>₹${e.amount}</span>
+        <span>${e.type === "save" ? "Saved" : e.category}</span>
+        <strong>₹${e.amount}</strong>
       </li>
     `;
   });
 
-  totalEl.textContent = total;
-  foodTotal.textContent = `₹${totals.Food}`;
-  travelTotal.textContent = `₹${totals.Travel}`;
-  shoppingTotal.textContent = `₹${totals.Shopping}`;
-  billsTotal.textContent = `₹${totals.Bills}`;
+  totalSpent.textContent = spent;
+  totalSaved.textContent = saved;
 
-  drawChart();
+  drawBar(todaySpent, todaySaved);
+  drawPie(categoryMap);
 }
 
-function drawChart() {
-  if(chart) chart.destroy();
-  chart = new Chart(chartEl = document.getElementById("chart"), {
-    type:"doughnut",
-    data:{
-      labels:Object.keys(totals),
-      datasets:[{
-        data:Object.values(totals),
-        backgroundColor:["#22c55e","#3b82f6","#f59e0b","#ef4444"]
+function drawBar(spend, save) {
+  if (barChart) barChart.destroy();
+  barChart = new Chart(barChartCtx = document.getElementById("barChart"), {
+    type: "bar",
+    data: {
+      labels: ["Spend", "Save"],
+      datasets: [{
+        data: [spend, save],
+        backgroundColor: ["#ef4444", "#22c55e"]
       }]
     },
-    options:{
-      cutout:"70%",
-      plugins:{ legend:{ position:"bottom" } }
+    options: { plugins:{ legend:{ display:false } } }
+  });
+}
+
+function drawPie(map) {
+  if (pieChart) pieChart.destroy();
+  pieChart = new Chart(document.getElementById("pieChart"), {
+    type: "pie",
+    data: {
+      labels: Object.keys(map),
+      datasets: [{
+        data: Object.values(map),
+        backgroundColor: ["#22c55e","#3b82f6","#f59e0b","#ef4444"]
+      }]
     }
   });
 }
