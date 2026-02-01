@@ -110,6 +110,7 @@ Charts are minimal and support decisions without distraction.
 }
 
 Simple, predictable, and easy to extend.
+```
 
 
 ---
@@ -137,7 +138,7 @@ Runs entirely in the browser.
 ⚡ Getting Started
 
 Clone the repository
-
+```
 git clone https://github.com/your-username/ledgerly.git
 
 Open locally
@@ -148,7 +149,7 @@ Deploy
 
 Use GitHub Pages for best mobile experience.
 
-
+```
 ---
 
 🧹 First-Run Tip
@@ -218,7 +219,7 @@ Free to use, modify, and improve.
 🎥 Adding Animations
 
 Record short screen demos and place them here:
-
+```
 assets/
 ├── ledgerly-demo.gif
 ├── mobile-ui.gif
@@ -226,4 +227,4 @@ assets/
 ├── month-switch.gif
 ├── charts.gif
 ├── delete-entry.gif
-
+```
